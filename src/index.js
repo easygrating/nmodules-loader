@@ -17,13 +17,11 @@ function loadModules(dir, opts) {
     throw new Error(ERROR_MESSAGE);
   }
 
-  let modules = [];
   const fileNames = !!recursive
     ? getAllFilesRecursive(fullPath)
     : getAllFiles(fullPath);
 
-  modules = fileNames.map((item) => require(item));
-  return modules;
+    return fileNames.map((item) => require(item));
 }
 
 /**
