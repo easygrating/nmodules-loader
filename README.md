@@ -11,7 +11,7 @@ This project provides a utility for loading all modules from a specified directo
 Using npm:
 
 ```bash
-npm i @easygrating/easytree
+npm i @easygrating/nmodules-loader
 ```
 
 ## Usage
