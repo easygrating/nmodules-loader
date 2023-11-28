@@ -1,7 +1,7 @@
 {
   "name": "nmodules-loader",
   "version": "0.1.0",
-  "description": "loads all node modules of a given path",
+  "description": "Loads all node modules of a given path",
   "main": "index.js",
   "scripts": {
     "test": "jest"
