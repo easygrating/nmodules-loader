@@ -15,6 +15,8 @@ jobs:
           node-version: 18
       - run: npm ci
         name: Install packages
+      - run: npm test
+        name: Test library
       - run: npm run build
         name: Build library
 
