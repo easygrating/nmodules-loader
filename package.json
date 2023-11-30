@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Loads all Node.js modules of a given path",
   "main": "./src/index.js",
+  "files": [
+    "./src/**/*"
+  ],
   "scripts": {
     "test": "jest"
   },
