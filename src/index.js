@@ -1,55 +1,80 @@
 "use strict";
 
-const fs = require("fs");
+const { access, constants, readdir } = require("fs").promises;
 const path = require("path");
 const ERROR_MESSAGE = "INVALID PATH";
 
 /**
- * Load all modules of a directory
- * @param {string} dir
- * @param {*} opts
- * @returns
+ * Load all modules of a directory.
+ *
+ * @param {string} dir - The directory path to load the modules from.
+ * @param {Object} opts - Optional options object.
+ * @param {boolean} opts.recursive - If true, loads modules recursively from the directory. Default is false.
+ * @return {Promise<Array>} - A promise that resolves to an array of loaded modules.
+ * @throws {Error} - Throws an error if the directory cannot be accessed or if loading modules fails.
  */
-function loadModules(dir, opts) {
+async function loadModules(dir, opts) {
   const recursive = opts?.recursive;
   const fullPath = path.resolve(dir);
-  if (!fs.existsSync(fullPath)) {
+
+  try {
+    await access(fullPath, constants.F_OK && constants.R_OK);
+
+    const fileNames = !!recursive
+      ? await getAllFilesRecursive(fullPath)
+      : await getAllFiles(fullPath);
+
+    return fileNames
+      .map((item) => tryRequire(item))
+      .filter((item) => item !== null);
+  } catch (err) {
     throw new Error(ERROR_MESSAGE);
   }
-
-  const fileNames = !!recursive
-    ? getAllFilesRecursive(fullPath)
-    : getAllFiles(fullPath);
-
-    return fileNames.map((item) => require(item));
 }
 
 /**
- * Loads all file tree
- * @param {string} dir absolute dir path
- * @returns
+ * Tries to require a module at the specified path.
+ *
+ * @param {string} path - The path to the module.
+ * @return {object} The required module if successful, null otherwise.
  */
-function getAllFilesRecursive(dir) {
-  const children = fs.readdirSync(dir, { withFileTypes: true });
+function tryRequire(path) {
+  try {
+    return require(path);
+  } catch (err) {
+    console.error('Error loading module "%s": %s', path, err);
+    return null;
+  }
+}
+
+/**
+ * Recursively retrieves all files in a directory and its subdirectories.
+ *
+ * @param {string} dir - The directory path to start the search from.
+ * @return {Array<string>} An array of file paths.
+ */
+async function getAllFilesRecursive(dir) {
+  const children = await readdir(dir, { withFileTypes: true });
   const result = [];
   for (const child of children) {
     if (child.isDirectory()) {
-      result.push(...getAllFiles(path.join(dir, child.name)));
+      result.push(...(await getAllFiles(path.join(dir, child.name))));
     } else {
       result.push(path.join(dir, child.name));
     }
   }
+
   return result;
 }
 
 /**
- * Loads all file of a directory
- * @param {string} dir absolute dir path
- * @returns
+ * Loads all file of a directory.
+ *
+ * @param {string} dir - The directory path.
+ * @return {Array} - An array containing the paths of all the files in the directory.
  */
-function getAllFiles(dir) {
-  return fs
-    .readdirSync(dir, { withFileTypes: true })
+async function getAllFiles(dir) {
+  return (await readdir(dir, { withFileTypes: true }))
     .filter((item) => !item.isDirectory())
     .map((item) => path.join(dir, item.name));
 }
