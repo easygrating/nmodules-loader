@@ -22,7 +22,7 @@ describe("Test all global functions", () => {
     });
   });
 
-  test("Should load all modules inside a folder c", async () => {
+  test("Should load all modules inside a folder recursive", async () => {
     const fileNames = await loader.loadModules("./sample", {
       recursive: true,
     });
