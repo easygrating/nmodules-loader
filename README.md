@@ -36,7 +36,7 @@ If an invalid path is provided, the `loadModules` function will throw an error w
 You can import the functions in your project as follows:
 
 ```javascript
-const { loadModules, getAllFiles, getAllFilesRecursive } = require('nmodules-loader');
+const { loadModules, getAllFiles, getAllFilesRecursive } = require('@easygrating/nmodules-loader');
 ```
 
 ## Example
@@ -44,7 +44,7 @@ const { loadModules, getAllFiles, getAllFilesRecursive } = require('nmodules-loa
 Here is an example of how to use the loadModules function:
 
 ```javascript
-const { loadModules } = require('nmodules-loader');
+const { loadModules } = require('@easygrating/nmodules-loader');
 
 try {
   const modules = loadModules('./myDir', { recursive: true });
